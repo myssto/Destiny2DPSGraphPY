@@ -1,10 +1,13 @@
 import tkinter as tk
 
-class NavBar(tk.Frame):
-    def __init__(self, master, menus:list):
+from frontend.stylings.themecontroller import s_Navbar
+from frontend.stylings.widgets import Frame
+
+
+class NavBar(Frame):
+    def __init__(self, master, menus: list):
         super().__init__(master=master)
         self.master = master
-        self.config(**self.master.frame_style)
         self.pack()
 
         self.menus = menus
@@ -17,7 +20,7 @@ class NavBar(tk.Frame):
 
     def nav_ui(self):
         # Create navbar and load tabs
-        self.nav_listbox = tk.Listbox(self, **self.master.navbar_style)
+        self.nav_listbox = tk.Listbox(self, **s_Navbar())
         self.nav_listbox.pack()
         for idx, menu in enumerate(self.menus):
             self.nav_listbox.insert(idx+1, menu.navname)
@@ -34,7 +37,7 @@ class NavBar(tk.Frame):
 
         if target.winfo_viewable():
             return
-        
+
         self.menus.remove(target)
         for menu in self.menus:
             menu.pack_forget()

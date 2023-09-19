@@ -1,0 +1,48 @@
+{
+    "Button": {
+        "bg": "#1E1E1E",
+        "fg": "#CCCCCC",
+        "height": 1,
+        "width": 17,
+        "relief": "ridge"
+    },
+    "Checkbutton": {
+        "bg": "#1E1E1E",
+        "fg": "#CCCCCC",
+        "selectcolor": "#1E1E1E"
+    },
+    "Combobox": {
+        "width": 17
+    },
+    "Frame": {
+        "bg": "#1E1E1E",
+        "highlightcolor": "#000000",
+        "highlightbackground": "#000000",
+        "highlightthickness": 2
+    },
+    "Subframe": {
+        "bg": "#1E1E1E"
+    },
+    "Label": {
+        "bg": "#1E1E1E",
+        "fg": "#CCCCCC"
+    },
+    "Logmenu": {
+        "bg": "#808080"
+    },
+    "Navbar": {
+        "bg": "#1E1E1E",
+        "fg": "#CCCCCC",
+        "height": 5,
+        "highlightthickness": 0,
+        "borderwidth": 0,
+        "highlightcolor": "#000000",
+        "selectbackground": "#808080",
+        "selectforeground": "#FFFFFF",
+        "selectborderwidth": 0,
+        "activestyle": "none",
+        "font": 20,
+        "width": 10,
+        "exportselection": false
+    }
+}

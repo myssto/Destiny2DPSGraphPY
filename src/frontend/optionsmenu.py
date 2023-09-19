@@ -1,21 +1,26 @@
+import csv
+import json
 import os
 import pickle
-import json
-import csv
 import time
 import tkinter as tk
-import tkcap
-from tkinter import messagebox
-from tkinter import ttk
-from tkinter.filedialog import asksaveasfile, askopenfilename
 from pprint import pprint
-import backend.backend as backend
+from tkinter import messagebox, ttk
+from tkinter.filedialog import askopenfilename, asksaveasfile
 
-class OptionsMenu(tk.Frame):
+import tkcap
+
+import backend.backend as backend
+from backend.utility.impexpmgr import ImpExpManager
+from frontend.stylings.themecontroller import THEME_CHOICES
+from frontend.stylings.widgets import (Button, Checkbutton, Combobox, Frame,
+                                       Label, Subframe)
+
+
+class OptionsMenu(Frame):
     def __init__(self, master):
         super().__init__(master=master)
         self.master = master
-        self.config(**self.master.frame_style)
         self.pack()
         self.navname = 'Options'
 
@@ -30,7 +35,7 @@ class OptionsMenu(tk.Frame):
 
     def options_ui(self):
         # Combobox options
-        interface_theme_choices = ['Dark', 'Light']
+        interface_theme_choices = THEME_CHOICES.keys()
         interface_logmode_choices = ['App', 'Console', 'Both']
         exp_exts = ['json', 'csv', 'pickle']
         graph_initial_slot_choices = [str(i+1) for i in range(10)]
@@ -57,27 +62,27 @@ class OptionsMenu(tk.Frame):
         self.menu_widgets = {
             # Graph
             'graph': {
-                'header': [tk.Label(self, text='Graph', **self.master.label_style)],
+                'header': [Label(self, text='Graph')],
 
-                'title': [tk.Label(self, text='Graph Title', **self.master.label_style),
+                'title': [Label(self, text='Graph Title'),
                           tk.Entry(self, textvariable=self.menu_vars['graph_title'])],
 
-                'xlabel': [tk.Label(self, text='X Axis Name', **self.master.label_style),
+                'xlabel': [Label(self, text='X Axis Name'),
                            tk.Entry(self, textvariable=self.menu_vars['graph_xlabel'])],
 
-                'xlim': [tk.Label(self, text='X Axis Upper Limit', **self.master.label_style),
+                'xlim': [Label(self, text='X Axis Upper Limit'),
                          tk.Entry(self, textvariable=self.menu_vars['graph_xlim'],
                                  validate='key', validatecommand=(val_int, '%S'))],
 
-                'ylabel': [tk.Label(self, text='Y Axis Name', **self.master.label_style),
+                'ylabel': [Label(self, text='Y Axis Name'),
                            tk.Entry(self, textvariable=self.menu_vars['graph_ylabel'])],
 
-                'ylim': [tk.Label(self, text='Y Axis Upper Limit', **self.master.label_style),
+                'ylim': [Label(self, text='Y Axis Upper Limit'),
                          tk.Entry(self, textvariable=self.menu_vars['graph_ylim'],
                                  validate='key', validatecommand=(val_int, '%S'))],
 
-                'initial_slots': [tk.Label(self, text='Initial Weapon Slots', **self.master.label_style),
-                                  ttk.Combobox(self, values=graph_initial_slot_choices, width=3, state='readonly')],
+                'initial_slots': [Label(self, text='Initial Weapon Slots'),
+                                  Combobox(self, values=graph_initial_slot_choices, width=3, state='readonly')],
                 
                 'initial_slots:go': [{}, {'sticky': 'NSW'}],
 
@@ -86,11 +91,11 @@ class OptionsMenu(tk.Frame):
             },
             # Import / Export
             'impexp': {
-                'header': [tk.Label(self, text='Import / Export', **self.master.label_style)],
+                'header': [Label(self, text='Import / Export')],
 
                 'export': [tk.Button(self, text='Export As', 
                                      command=self.export_weps_hdlr, **self.master.button_style),
-                           ttk.Combobox(self, values=exp_exts, **self.master.combo_style)],
+                           Combobox(self, values=exp_exts, **self.master.combo_style)],
 
                 'export:go': [{}, {'sticky': 'NSEW'}],
 
@@ -110,13 +115,13 @@ class OptionsMenu(tk.Frame):
             },
             # GUI
             'interface': {
-                'header': [tk.Label(self, text='Interface', **self.master.label_style)],
+                'header': [Label(self, text='Interface')],
 
-                'theme': [tk.Label(self, text='Theme', **self.master.label_style),
-                          ttk.Combobox(self, values=interface_theme_choices, **self.master.combo_style)],
+                'theme': [Label(self, text='Theme'),
+                          Combobox(self, values=interface_theme_choices, **self.master.combo_style)],
 
-                'logmode': [tk.Label(self, text='Log Mode', **self.master.label_style),
-                            ttk.Combobox(self, values=interface_logmode_choices, **self.master.combo_style)],
+                'logmode': [Label(self, text='Log Mode'),
+                            Combobox(self, values=interface_logmode_choices, **self.master.combo_style)],
 
                 'debugmode_dmgprints': [tk.Checkbutton(self, text='Debug Mode', **self.master.check_button_style,
                                                        variable=self.menu_vars['debug_mode']),
@@ -128,7 +133,7 @@ class OptionsMenu(tk.Frame):
         # Debug mode widgets
         if self.master.settings.debug_mode:
             self.menu_widgets['debug'] = {
-                'header': [tk.Label(self, text='Debug', **self.master.label_style)],
+                'header': [Label(self, text='Debug')],
 
                 'clearcache': [tk.Button(self, text='Clear Graph Cache',
                                         command=self.debug_ccache, **self.master.button_style),
@@ -176,7 +181,7 @@ class OptionsMenu(tk.Frame):
                     gi = {'in_': container, 'row': offset+idz-rewind, 'padx': 5, 'pady': 5}
                     for idc, obj in enumerate(widgset):
                         sticky = 'NSW' if idc % 2 == 0 else 'NSE'   
-                        if isinstance(obj, ttk.Combobox):
+                        if isinstance(obj, Combobox):
                             obj.bind("<<ComboboxSelected>>", lambda _: self.focus())
                         obj.grid(**gi, column=idc, sticky=sticky)
                         obj.lift()

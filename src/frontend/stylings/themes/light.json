@@ -1,0 +1,43 @@
+{
+    "Button": {
+        "height": 1,
+        "width": 17,
+        "relief": "ridge"
+    },
+    "Checkbutton": {
+    },
+    "Combobox": {
+        "width": 17
+    },
+    "Frame": {
+        "bg": "#FFFFFF",
+        "highlightcolor": "#000000",
+        "highlightbackground": "#FFFFFF",
+        "highlightthickness": 2
+    },
+    "Subframe": {
+        "bg": "#FFFFFF"
+    },
+    "Label": {
+        "bg": "#FFFFFF",
+        "fg": "#000000"
+    },
+    "Logmenu": {
+        "bg": "#808080"
+    },
+    "Navbar": {
+        "bg": "#FFFFFF",
+        "fg": "#000000",
+        "height": 5,
+        "highlightthickness": 0,
+        "borderwidth": 0,
+        "highlightcolor": "#000000",
+        "selectbackground": "#808080",
+        "selectforeground": "#FFFFFF",
+        "selectborderwidth": 0,
+        "activestyle": "none",
+        "font": 20,
+        "width": 10,
+        "exportselection": false
+    }
+}

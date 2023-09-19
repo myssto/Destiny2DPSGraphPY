@@ -1,109 +1,16 @@
-import sys
-import os
 import configparser
+import os
+import sys
 import tkinter as tk
+
+import backend.backend as backend
+from backend.utility.settings import Settings
+import frontend.stylings.themecontroller as themecontroller
 from frontend.graphmenu import GraphMenu
-from frontend.weaponsmenu import WeaponsMenu
-from frontend.optionsmenu import OptionsMenu
 from frontend.logemenu import LogMenu
 from frontend.navbar import NavBar
-import backend.backend as backend
-
-class Settings:
-    def __init__(self):
-        self.config = configparser.ConfigParser()
-        ini_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'backend/settings.ini')
-        self.check_and_create_settings_file(ini_path)
-        with open(ini_path, 'r', encoding='utf-8') as f:
-            self.config.read_file(f)
-        self.interface_theme = self.config.get('Interface', 'theme')
-        self.log_mode = self.config.get('Interface', 'log_mode')
-        self.do_dmg_prints = self.config.getboolean('Interface', 'dmg_prints')
-        self.debug_mode = self.config.getboolean('Interface', 'debug_mode')
-        self.do_auto_save = self.config.getboolean('AutoSave', 'enabled')
-        self.auto_save_path = self.config.get('AutoSave', 'path')
-        self.graph_title = self.config.get('Graph', 'title')
-        self.graph_xlabel = self.config.get('Graph', 'xlabel')
-        self.graph_xlim = self.config.getint('Graph', 'xlim')
-        self.graph_ylabel = self.config.get('Graph', 'ylabel')
-        self.graph_ylim = self.config.getint('Graph', 'ylim')
-        self.graph_initial_slots = self.config.getint('Graph', 'initial_slots')
-        self.graph_colors = self.config.get('Graph', 'colors')
-
-    def check_and_create_settings_file(self, ini_path):
-        if not os.path.exists(ini_path):
-            default_settings = {
-                'Interface': {
-                    'theme': 'Dark',
-                    'log_mode': 'App',
-                    'dmg_steps': 'False',
-                    'debug_mode': 'False'
-                },
-                'AutoSave': {
-                    'enabled': 'False',
-                    'path': ''
-                },
-                'Graph': {
-                    'title': 'DPS Over Time',
-                    'xlabel': 'Time (seconds)',
-                    'xlim': '45',
-                    'ylabel': 'DPS',
-                    'ylim': '300000',
-                    'initial_slots': '3',
-                    'colors': 'random'
-                }
-            }
-
-            for section, settings in default_settings.items():
-                self.config.add_section(section)
-                for key, value in settings.items():
-                    self.config.set(section, key, value)
-
-            with open(ini_path, 'w', encoding='utf-8') as f:
-                self.config.write(f)
-
-    def reset_to_defaults(self):
-        self.interface_theme = 'Dark'
-        self.log_mode = 'App'
-        self.do_dmg_prints = False
-        self.debug_mode = False
-        self.do_auto_save = False
-        self.auto_save_path = ''
-        self.graph_title = 'DPS Over Time'
-        self.graph_xlabel = 'Time (seconds)'
-        self.graph_xlim = 45
-        self.graph_ylabel = 'DPS'
-        self.graph_ylim = 300000
-        self.graph_initial_slots = 3
-        self.graph_colors = ''
-        self.save_settings()
-
-    def save_settings(self):
-        self.config.set('Interface', 'theme', self.interface_theme)
-        self.config.set('Interface', 'log_mode', self.log_mode)
-        self.config.set('Interface', 'dmg_prints', str(self.do_dmg_prints))
-        self.config.set('Interface', 'debug_mode', str(self.debug_mode))
-        self.config.set('AutoSave', 'enabled', str(self.do_auto_save))
-        self.config.set('AutoSave', 'path', self.auto_save_path)
-        self.config.set('Graph', 'title', self.graph_title)
-        self.config.set('Graph', 'xlabel', self.graph_xlabel)
-        self.config.set('Graph', 'xlim', str(self.graph_xlim))
-        self.config.set('Graph', 'ylabel', self.graph_ylabel)
-        self.config.set('Graph', 'ylim', str(self.graph_ylim))
-        self.config.set('Graph', 'initial_slots', str(self.graph_initial_slots))
-        self.config.set('Graph', 'colors', self.graph_colors)
-
-        with open('backend/settings.ini', 'w') as f:
-            self.config.write(f)
-            f.close()
-
-    def restart_gui(self, root):
-        # Close the tkinter window
-        global firstrun
-        firstrun = False
-        root.destroy()
-        # Restart gui
-        global_start_gui()
+from frontend.optionsmenu import OptionsMenu
+from frontend.weaponsmenu import WeaponsMenu
 
 class GUI(tk.Frame):
     def __init__(self, master=None):
@@ -120,6 +27,7 @@ class GUI(tk.Frame):
         self.settings = Settings()
         self.default_padding = {'padx': 5, 'pady': 5, 'sticky': 'NSW'}
         self.combo_style = {'width': 17, 'state': 'readonly'}
+        themecontroller.theme = self.settings.interface_theme.lower()
         # Access and apply settings
         if self.settings.interface_theme.lower() == 'dark':
             self.configure(bg='#1E1E1E')
@@ -254,7 +162,7 @@ def redirect_logs(text_widget: tk.Widget, log_mode: str):
     else:
         sys.stdout.write = write_to_app
 
-def global_start_gui():
+def start_gui() -> None:
     global root
     root = tk.Tk()
     # Use PhotoImage to open the PNG file
@@ -264,7 +172,11 @@ def global_start_gui():
     app = GUI(master=root)
     app.mainloop()
 
-global firstrun
+def restart_gui() -> None:
+    global firstrun
+    firstrun = False
+    start_gui()
+
 firstrun = True
 stdoutwrite = sys.stdout.write
-global_start_gui()
+start_gui()
